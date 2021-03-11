@@ -37,8 +37,8 @@ type QueryResult struct {
 // InitLedger adds a base set of cars to the ledger
 func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	cars := []Car{
-		Car{Title: "test article", IpfsAddress: "https://ipfs.io/ipfs/QmQU2gS4gZ7TpiTECjDUxdQFd9bBBEWxDxPPfhLfYHVuei", OwnerAccountId: "000001",
-			LastOwnerAccountId: "000000", AcquireDate: "2020.10.01 10:20:18", OwnerName: "test owner", OwnerCardNumber: "110101199501011668"},
+		Car{Title: "示例文章1", IpfsAddress: "https://ipfs.io/ipfs/QmQU2gS4gZ7TpiTECjDUxdQFd9bBBEWxDxPPfhLfYHVuei", OwnerAccountId: "000001",
+			LastOwnerAccountId: "000000", AcquireDate: "2020.10.01 10:20:18", OwnerName: "示例作者", OwnerCardNumber: "110101199501011668"},
 	}
 
 	for i, car := range cars {
