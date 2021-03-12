@@ -56,9 +56,10 @@ var num int = 0
 
 func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	cars := []Car{
-		Car{Title: "test article", IpfsAddress: "https://ipfs.io/ipfs/QmQU2gS4gZ7TpiTECjDUxdQFd9bBBEWxDxPPfhLfYHVuei", OwnerAccountId: "000001",
-			LastOwnerAccountId: "000000", AcquireDate: "2020.10.01 10:20:18", OwnerName: "test owner", OwnerCardNumber: "110101199501011668"},
+		Car{Title: "test article", IpfsAddress: "https://ipfs.io/ipfs/QmQU2gS4gZ7TpiTECjDUxdQFd9bBBEWxDxPPfhLfYHVuei", OwnerAccountId: "0001",
+			LastOwnerAccountId: "0000", AcquireDate: "2020.10.01 10:20:18", OwnerName: "test owner", OwnerCardNumber: "110101199501011668"},
 	}
+	//初始化了一条数据，所以num改成1
 	num = 1
 	for _, car := range cars {
 		carAsBytes, _ := json.Marshal(car)
@@ -73,7 +74,24 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 }
 
 // CreateCar adds a new car to the world state with given details
-func (s *SmartContract) CreateCar(ctx contractapi.TransactionContextInterface, carNumber string, title string, ipfsaddress string,
+//func (s *SmartContract) CreateCar(ctx contractapi.TransactionContextInterface, carNumber string, title string, ipfsaddress string,
+//	owneraccountid string, lastOwneraccountid string, acquiredate string, authorname string, authorcardnumber string) error {
+//	car := Car{
+//		Title:   title,
+//		IpfsAddress:  ipfsaddress,
+//		OwnerAccountId: owneraccountid,
+//		LastOwnerAccountId:  lastOwneraccountid,
+//		AcquireDate:   acquiredate,
+//		OwnerName:  authorname,
+//		OwnerCardNumber: authorcardnumber,
+//	}
+//
+//	carAsBytes, _ := json.Marshal(car)
+//
+//	return ctx.GetStub().PutState(carNumber, carAsBytes)
+//}
+
+func (s *SmartContract) CreateCar(ctx contractapi.TransactionContextInterface, title string, ipfsaddress string,
 	owneraccountid string, lastOwneraccountid string, acquiredate string, authorname string, authorcardnumber string) error {
 	car := Car{
 		Title:   title,
@@ -87,7 +105,9 @@ func (s *SmartContract) CreateCar(ctx contractapi.TransactionContextInterface, c
 
 	carAsBytes, _ := json.Marshal(car)
 
-	return ctx.GetStub().PutState(carNumber, carAsBytes)
+	num++
+
+	return ctx.GetStub().PutState(fmt.Sprintf("%07d", num), carAsBytes)
 }
 
 // QueryCar returns the car stored in the world state with given id
