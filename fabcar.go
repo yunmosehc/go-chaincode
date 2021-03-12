@@ -177,6 +177,11 @@ func (s *SmartContract) ChangeCarOwner(ctx contractapi.TransactionContextInterfa
 	return ctx.GetStub().PutState(carNumber, carAsBytes)
 }
 
+// 删除文章方法
+func (s *SmartContract) DeleteCarOwner(ctx contractapi.TransactionContextInterface, carNumber string) error {
+	return ctx.GetStub().DelState(carNumber)
+}
+
 func main() {
 
 	chaincode, err := contractapi.NewChaincode(new(SmartContract))
