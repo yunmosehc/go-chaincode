@@ -7,8 +7,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
-
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
@@ -35,16 +33,37 @@ type QueryResult struct {
 }
 
 // InitLedger adds a base set of cars to the ledger
+//func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) error {
+//	cars := []Car{
+//		Car{Title: "test article", IpfsAddress: "https://ipfs.io/ipfs/QmQU2gS4gZ7TpiTECjDUxdQFd9bBBEWxDxPPfhLfYHVuei", OwnerAccountId: "000001",
+//			LastOwnerAccountId: "000000", AcquireDate: "2020.10.01 10:20:18", OwnerName: "test owner", OwnerCardNumber: "110101199501011668"},
+//	}
+//
+//	for i, car := range cars {
+//		carAsBytes, _ := json.Marshal(car)
+//		err := ctx.GetStub().PutState("CAR"+strconv.Itoa(i), carAsBytes)
+//
+//		if err != nil {
+//			return fmt.Errorf("Failed to put to world state. %s", err.Error())
+//		}
+//	}
+//
+//	return nil
+//}
+
+//全局变量记录文章编号
+var num int = 0
+
 func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	cars := []Car{
 		Car{Title: "test article", IpfsAddress: "https://ipfs.io/ipfs/QmQU2gS4gZ7TpiTECjDUxdQFd9bBBEWxDxPPfhLfYHVuei", OwnerAccountId: "000001",
 			LastOwnerAccountId: "000000", AcquireDate: "2020.10.01 10:20:18", OwnerName: "test owner", OwnerCardNumber: "110101199501011668"},
 	}
-
-	for i, car := range cars {
+	num = 1
+	for _, car := range cars {
 		carAsBytes, _ := json.Marshal(car)
-		err := ctx.GetStub().PutState("CAR"+strconv.Itoa(i), carAsBytes)
-
+		//fmt.Sprintf("%07d", num)是保留num前面的0，总共7位
+		err := ctx.GetStub().PutState(fmt.Sprintf("%07d", num), carAsBytes)
 		if err != nil {
 			return fmt.Errorf("Failed to put to world state. %s", err.Error())
 		}
