@@ -68,6 +68,11 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 		if err != nil {
 			return fmt.Errorf("Failed to put to world state. %s", err.Error())
 		}
+
+		err = ctx.GetStub().DelState(fmt.Sprintf("%07d", num))
+		if err != nil {
+			fmt.Println("删除初始化账本的一条数据出错")
+		}
 	}
 
 	return nil
@@ -160,8 +165,25 @@ func (s *SmartContract) QueryAllCars(ctx contractapi.TransactionContextInterface
 }
 
 // ChangeCarOwner updates the owner field of car with given id in world state
+//func (s *SmartContract) ChangeCarOwner(ctx contractapi.TransactionContextInterface, carNumber string, newOwnerAccountId string,
+//	newOwnerName string, newOwnerCardNumber string) error {
+//	car, err := s.QueryCar(ctx, carNumber)
+//
+//	if err != nil {
+//		return err
+//	}
+//
+//	car.OwnerAccountId = newOwnerAccountId
+//	car.OwnerName = newOwnerName
+//	car.OwnerCardNumber = newOwnerCardNumber
+//
+//	carAsBytes, _ := json.Marshal(car)
+//
+//	return ctx.GetStub().PutState(carNumber, carAsBytes)
+//}
+
 func (s *SmartContract) ChangeCarOwner(ctx contractapi.TransactionContextInterface, carNumber string, newOwnerAccountId string,
-	newOwnerName string, newOwnerCardNumber string) error {
+	lastOwnerAccountId string, acquireDate string, newOwnerName string, newOwnerCardNumber string) error {
 	car, err := s.QueryCar(ctx, carNumber)
 
 	if err != nil {
@@ -169,6 +191,8 @@ func (s *SmartContract) ChangeCarOwner(ctx contractapi.TransactionContextInterfa
 	}
 
 	car.OwnerAccountId = newOwnerAccountId
+	car.LastOwnerAccountId = lastOwnerAccountId
+	car.AcquireDate = acquireDate
 	car.OwnerName = newOwnerName
 	car.OwnerCardNumber = newOwnerCardNumber
 
@@ -177,7 +201,7 @@ func (s *SmartContract) ChangeCarOwner(ctx contractapi.TransactionContextInterfa
 	return ctx.GetStub().PutState(carNumber, carAsBytes)
 }
 
-// 删除文章方法
+//删除文章方法
 func (s *SmartContract) DeleteCarOwner(ctx contractapi.TransactionContextInterface, carNumber string) error {
 	return ctx.GetStub().DelState(carNumber)
 }
