@@ -68,13 +68,7 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 		if err != nil {
 			return fmt.Errorf("Failed to put to world state. %s", err.Error())
 		}
-
-		err = ctx.GetStub().DelState(fmt.Sprintf("%07d", num))
-		if err != nil {
-			fmt.Println("删除初始化账本的一条数据出错")
-		}
 	}
-
 	return nil
 }
 
@@ -204,6 +198,34 @@ func (s *SmartContract) ChangeCarOwner(ctx contractapi.TransactionContextInterfa
 //删除文章方法
 func (s *SmartContract) DeleteCarOwner(ctx contractapi.TransactionContextInterface, carNumber string) error {
 	return ctx.GetStub().DelState(carNumber)
+}
+
+func (s *SmartContract) GetHistoryOfCar(ctx contractapi.TransactionContextInterface, carNumber string) ([]QueryResult, error) {
+
+	historyQueryIteratorInterface, err := ctx.GetStub().GetHistoryForKey(carNumber)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to GetHistoryForKey. %s", err.Error())
+	}
+
+	defer historyQueryIteratorInterface.Close()
+
+	results := []QueryResult{}
+
+	for historyQueryIteratorInterface.HasNext() {
+		queryResponse, err := historyQueryIteratorInterface.Next()
+
+		if err != nil {
+			return nil, err
+		}
+
+		car := new(Car)
+		_ = json.Unmarshal(queryResponse.Value, car)
+
+		queryResult := QueryResult{Key: queryResponse.TxId, Record: car}
+		results = append(results, queryResult)
+	}
+
+	return results, nil
 }
 
 func main() {
